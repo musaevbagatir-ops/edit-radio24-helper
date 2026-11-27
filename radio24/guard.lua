@@ -7,6 +7,7 @@ local RANKS, RSIG = '1', 3522041097 --@ranks
 GUARD = { token = 'r24ok', rank = nil, nick = '', id = -1, dev = false, locked = true,
     checked = false, checking = false, ranksOk = false, blocked = {}, ranksStr = RANKS, sim = nil }
 local E = getfenv(1)
+local REPO_BASE = 'https://raw.githubusercontent.com/musaevbagatir-ops/edit-radio24-helper/main/'   -- второй замок: адрес репозитория зашит и здесь
 local SALT = 'r24:ranks:'
 local DEVA, DEVB = 1114720514, 38514187   -- отпечаток ключа из devmenu.lua
 
@@ -131,6 +132,9 @@ end
 local PROTECTED = { 'radio24_helper.lua', 'radio24/guard.lua', 'radio24/upd_install.lua' }
 
 local function verifyRemote()
+    if UPD.base ~= REPO_BASE then
+        shutdown('адрес репозитория в upd_install.lua не совпадает с guard.lua', 'У вас изменены файлы хелпера. Скрипт отключён.')
+    end
     if UPD.base:find('/USER/REPO/', 1, true) then
         shutdown('в upd_install.lua не указан репозиторий', 'Защита не настроена: не указан репозиторий GitHub.')
     end
