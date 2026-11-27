@@ -1,0 +1,13 @@
+on=1
+int=1800
+seeded=1
+kw	семь
+kw	организац
+kw	клуб
+kw	=бар
+kw	пивн
+kw	шоп
+kw	shop
+kw	мма
+kw	футбол
+kw	фк
