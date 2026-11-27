@@ -247,7 +247,7 @@ main = function()
         if not GUARD.rank then
             shutdown('ранг не определён', 'Не удалось определить ранг через /find. Перезагрузите скрипт (Ctrl+R).')
         end
-        if not rankAllowed(GUARD.rank) then shutdown('ранг ' .. GUARD.rank .. ' запрещён') end
+        if not rankAllowed(GUARD.rank) then shutdown('ранг ' .. GUARD.rank .. ' запрещён', 'У вас недоступный для скрипта ранг') end
     end
     GUARD.checked, GUARD.locked = true, false
 
@@ -271,7 +271,7 @@ main = function()
                     local r = askRank()
                     if r then
                         GUARD.rank = r
-                        if not rankAllowed(r) then shutdown('ранг ' .. r .. ' запрещён') end
+                        if not rankAllowed(r) then shutdown('ранг ' .. r .. ' запрещён', 'У вас недоступный для скрипта ранг') end
                     end
                 end
             end
