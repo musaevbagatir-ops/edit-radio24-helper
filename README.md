@@ -1,5 +1,3 @@
-# Radio24 AdHelper
-
 Помощник для редактирования объявлений на Radio24 в Online RP. Это скрипт на Lua для MoonLoader
 
 Установленные MoonLoader, SAMPFUNCS, SAMP.Lua и mimgui. Игра с проектом Online RP.
