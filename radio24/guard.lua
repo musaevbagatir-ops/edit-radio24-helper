@@ -92,6 +92,7 @@ local function askRank()
             local till = os.clock() + 6
             while not GUARD.answered and os.clock() < till do wait(100) end
             GUARD.checking = false
+            if GUARD.answered then wait(400) end   -- дать потоку guardDialog закрыть окно /find до возможной выгрузки скрипта
             if GUARD.found then return GUARD.found end
         end
         wait(3000)
