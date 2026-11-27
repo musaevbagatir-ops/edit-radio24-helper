@@ -1,4 +1,4 @@
-version=7.5
+version=7.6
 file=radio24_helper.lua
 file=radio24/core.lua
 file=radio24/dictionary.lua
