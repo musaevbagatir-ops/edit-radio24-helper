@@ -3,7 +3,7 @@
 -- Старые файлы копируются в moonloader\config\radio24_backup\. При ошибке записи всё откатывается.
 -- Прогресс в чат: [loading=сколько файлов осталось].
 -- >>> СЮДА ВСТАВИТЬ РЕПОЗИТОРИЙ: GitHub-логин, имя репозитория, ветка (обычно main) <<<
-local GH_USER, GH_REPO, GH_BRANCH = 'USER', 'REPO', 'main'
+local GH_USER, GH_REPO, GH_BRANCH = 'musaevbagatir-ops', 'edit-radio24-helper', 'main'
 UPD = UPD or { base = 'https://raw.githubusercontent.com/' .. GH_USER .. '/' .. GH_REPO .. '/' .. GH_BRANCH .. '/', auto = true, busy = false, userUrl = false }
 pcall(ffi.cdef, 'unsigned int WinExec(const char* cmd, unsigned int show);')
 
