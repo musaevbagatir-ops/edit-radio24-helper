@@ -61,6 +61,7 @@ function updRun(manual)
         return
     end
     local codeNew = verCmp(m.version, thisScript().version) > 0
+    if not codeNew then updCleanup(m) end                 -- код актуален: убрать устаревшие файлы (del=) и лишние копии бэкапа
     local locData = tonumber((ucfgRead('radio24_dataver.txt') or ''):match('%d+')) or 0
     local dataNew = #m.data > 0 and m.dataver > locData
     -- защита: версия, установка которой уже ломалась (не совпала версия в helper), сама не ставится; ручной /adupd снимает блок
