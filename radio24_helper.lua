@@ -1,6 +1,6 @@
 script_name('Radio24 AdHelper')
 script_author('Bagatir_Wayne')
-script_version('7.12')
+script_version('7.13')
 
 -- Защита от падений lua51.dll (JIT): отключаем JIT-компиляцию для этого скрипта
 if jit then pcall(jit.off, true, true) end
