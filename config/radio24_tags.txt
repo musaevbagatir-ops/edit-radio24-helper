@@ -1,8 +1,0 @@
-tag	bp3
-tag	premium
-tag	bp5
-tag	bp6
-tag	bday
-tag	ny23
-tag	ny24
-tag	bp
