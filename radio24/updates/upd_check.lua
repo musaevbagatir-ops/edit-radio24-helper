@@ -9,13 +9,15 @@
 --                                  База для сравнения хранится у пользователя в radio24\config\updates\radio24_base\ и обновляется сама)
 --   force=radio24_settings.txt|learn|1        (необязательно: принудительно изменить конфиг)
 --   addkey=файл|ключ|значение                 (добавить key=value, если такого ключа нет; существующий НЕ меняет)
+--   del=radio24/app.lua            (устаревший файл кода: после успешной установки уходит в config\updates\radio24_trash; только явный список,
+--                                  только radio24\*.lua вне config, файлы из file= и служебные не трогаются; строки можно не убирать, повтор безвреден)
 --   (команды работают только с файлами radio24_*.txt, кроме служебных; ключи BOOLS добавляются сами при старте)
 -- Команды: /adupd (проверить и установить) | /adupd check | /adupd auto. Адрес хостинга пользователь менять не может (задан в upd_install.lua)
 UPD.notified = nil
 local origMain = main
 
 function updParse(raw)
-    local m = { files = {}, ops = {}, data = {}, dataver = 0 }
+    local m = { files = {}, ops = {}, data = {}, del = {}, dataver = 0 }
     for l in raw:gmatch('[^\r\n]+') do
         l = l:gsub('^%s+', ''):gsub('%s+$', '')
         local k, v = l:match('^(%a+)=(.*)$')
@@ -23,6 +25,8 @@ function updParse(raw)
             if k == 'version' then m.version = v:match('^%d+[%d%.]*$')
             elseif k == 'file' then
                 if v:match('^[%w_%-/]+%.lua$') and not v:find('..', 1, true) and v:sub(1, 1) ~= '/' then m.files[#m.files + 1] = v end
+            elseif k == 'del' then
+                if v:match('^radio24/[%w_%-/]+%.lua$') and not v:find('..', 1, true) and not v:find('radio24/config/', 1, true) then m.del[#m.del + 1] = v end
             elseif k == 'data' then
                 if v:match('^radio24_[%w_]+%.txt$') then m.data[#m.data + 1] = v end
             elseif k == 'dataver' then m.dataver = tonumber(v) or 0
@@ -65,7 +69,7 @@ function updRun(manual)
         if manual then pcall(os.remove, UCFG.dir .. 'radio24_updblock.txt')
         elseif verCmp(m.version, blk) <= 0 then codeNew = false end
     end
-    if not codeNew then m.files, m.ops = {}, {} end      -- код не менялся: ставим только данные
+    if not codeNew then m.files, m.ops, m.del = {}, {}, {} end      -- код не менялся: ставим только данные
     if not codeNew and not dataNew then
         if manual then say(T('У вас последняя версия: ') .. thisScript().version, 0xFF66FF66) end
         return

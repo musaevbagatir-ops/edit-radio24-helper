@@ -1,6 +1,7 @@
 -- radio24/updates/upd_install.lua: (2) установка новой версии с хостинга прямо в игре + перезапуск скрипта.
 -- Все файлы сначала скачиваются в память и проверяются (непустые, Lua-код компилируется), и только потом записываются.
 -- Старые файлы копируются в moonloader\radio24\config\updates\radio24_backup\. При ошибке записи всё откатывается.
+-- После установки: файлы из del= (version.txt) уходят в config\updates\radio24_trash, а в radio24_backup удаляются копии файлов, которых нет в file=.
 -- Прогресс в чат: [loading=сколько файлов осталось].
 -- >>> СЮДА ВСТАВИТЬ РЕПОЗИТОРИЙ: GitHub-логин, имя репозитория, ветка (обычно main) <<<
 local GH_USER, GH_REPO, GH_BRANCH = 'musaevbagatir-ops', 'edit-radio24-helper', 'main'
@@ -129,6 +130,39 @@ local function updInstallImpl(m)
         end
         error(T('не удалось записать ') .. tostring(werr) .. T(' (изменения отменены)'))
     end
+    -- чистка (ошибки тут не мешают обновлению): (а) del= из version.txt: устаревшие файлы уходят в корзину radio24_trash, только явный список,
+    -- только radio24\\*.lua вне config, не из file= и не служебные; (б) в radio24_backup удаляются копии, которых нет в текущем file=
+    pcall(function()
+        local function listDir(mask)
+            local res = {}
+            local h, nm = findFirstFile(mask)
+            if h then
+                while nm do res[#res + 1] = nm; nm = findNextFile(h) end
+                findClose(h)
+            end
+            return res
+        end
+        local keep = { ['radio24/interface/devmenu.lua'] = true, ['radio24/security/guard.lua'] = true,
+            ['radio24/updates/upd_install.lua'] = true, ['radio24/config/processing/radio24_logedit.lua'] = true }
+        for _, f in ipairs(m.files) do keep[f] = true end
+        local td = UCFG.dir .. 'radio24_trash\\'
+        ensureDirs(td)
+        for _, nm in ipairs(listDir(td .. '*')) do pcall(os.remove, td .. nm) end   -- корзина прошлого обновления
+        local moved, cleaned = 0, 0
+        for _, f in ipairs(m.del or {}) do
+            if not keep[f] and f:match('^radio24/[%w_%-/]+%.lua$') and not f:find('..', 1, true) and not f:find('radio24/config/', 1, true) then
+                local p = wd .. '\\' .. f:gsub('/', '\\')
+                local s = readAll(p)
+                if s and writeAll(td .. f:gsub('/', '__'), s) and os.remove(p) then moved = moved + 1 end
+            end
+        end
+        local want = {}
+        for _, f in ipairs(m.files) do want[(f:gsub('/', '__'))] = true end
+        for _, nm in ipairs(listDir(bd .. '*.lua')) do
+            if not want[nm] and os.remove(bd .. nm) then cleaned = cleaned + 1 end
+        end
+        if moved + cleaned > 0 then say(T('Убрано устаревших файлов: ') .. moved .. T(', старых копий в бэкапе: ') .. cleaned, 0xFF999999) end
+    end)
     -- флаг для следующего запуска: версия + принудительные команды конфига
     local fl = {}
     if isCode then fl[#fl + 1] = 'version=' .. m.version end
